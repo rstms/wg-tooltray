@@ -3,8 +3,6 @@ requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 requires_python = ">=3.10"
 
-
-
 [project]
 name = "wg-tooltray"
 authors = [{name = "Matt Krueger", email = "mkrueger@rstms.net"}]
@@ -39,7 +37,8 @@ dev = [
   "pytest",
   "python-box",
   "toml",
-  "tox"
+  "tox",
+  "toml-cli"
 ]
 docs = [
   "m2r2",

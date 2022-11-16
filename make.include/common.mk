@@ -1,16 +1,13 @@
 # common - initialization, variables, functions
 
-# extract values from pyproject.toml
-pyproject_toml_section = sed <pyproject.toml '1,/\[$(1)\]/d;/^\[/,$$d'
-pyproject_toml_value = sed -n '/^\s*$(1)\s*=/s/^.*"\(.*\)".*$$/\1/p;'
-pyproject_toml_lookup = $(call pyproject_toml_section,$(1))|$(call pyproject_toml_value,$(2))
+$(if $(shell which jq),,$(error $(shell jq)))
 
 # set make variables from project files
-project != $(call pyproject_toml_lookup,project,name)
-module != $(call pyproject_toml_lookup,tool.flit.module,name)
-cli != $(call pyproject_toml_section,project.scripts) | sed -n 's/^\(.*\)\s=.*$$/\1/p;q'
-version != grep __version__ $(module)/version.py | grep -o '[0-9.]*'
-python_src != find . -name \*.py
+project := $(shell tq <pyproject.toml -r .project.name)
+module := $(shell tq <pyproject.toml -r .tool.flit.module.name)
+version := $(shell grep __version__ $(module)/version.py | grep -o '[0-9.]*')
+cli := $(shell tq <pyproject.toml -r '.project.scripts|keys[0]')
+python_src := $(shell find . -name \*.py)
 other_src := $(call makefiles) pyproject.toml
 src := $(python_src) $(other_src)
 
